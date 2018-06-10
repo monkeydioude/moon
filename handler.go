@@ -107,7 +107,7 @@ func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 		data, _, err := route.Guide(newRequest(v, &r.Header, q), h.config)
 		if err != nil {
-			log.Println(err)
+			log.Printf("[ERR ] Error while Guiding. Reason: %s\n", err)
 			tools.HttpNotFound(rw)
 			return
 		}
