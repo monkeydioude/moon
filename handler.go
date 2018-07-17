@@ -133,6 +133,7 @@ func Moon(conf *Configuration) *Handler {
 }
 
 // Add writes a Means in the Routes map using the regexp that will match the URI, a method and a Guide definition
+// Guide type is a callback as such function(*Request, *Configuration) ([]byte, int, error)
 func (routes *Routes) Add(r, m string, g Guide) {
 	(*routes)[r] = &Means{
 		Method: m,
@@ -141,6 +142,13 @@ func (routes *Routes) Add(r, m string, g Guide) {
 }
 
 // AddGet is a wrapper around Add that forces GET method
+// Guide type is a callback as such function(*Request, *Configuration) ([]byte, int, error)
 func (routes *Routes) AddGet(r string, f Guide) {
 	routes.Add(r, "GET", f)
+}
+
+// AddPost is a wrapper around Add that forces GET method
+// Guide type is a callback as such function(*Request, *Configuration) ([]byte, int, error)
+func (routes *Routes) AddPost(r string, f Guide) {
+	routes.Add(r, "POST", f)
 }
