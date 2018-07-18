@@ -3,7 +3,6 @@ package template
 import (
 	"bytes"
 	"html/template"
-	"log"
 )
 
 type Template interface {
@@ -15,6 +14,8 @@ type Template interface {
 
 type Values interface {
 	Get(string) []byte
+	IsEmpty() bool
+	GetAll() interface{}
 }
 
 type Engine struct {
@@ -27,7 +28,6 @@ type Engine struct {
 func NewEngine(path string) *Engine {
 	return &Engine{
 		Path:   path,
-		Values: &TemplateValues{},
 		Childs: make(map[string]Template),
 	}
 }
@@ -46,36 +46,27 @@ func (t *Engine) GetValues() interface{} {
 
 func (t *Engine) WithChild(path, name string) *Engine {
 	t.Childs[name] = NewEngine(path)
-	t = t.Childs[name].(*Engine)
-	return t
+	return t.Childs[name].(*Engine)
 }
 
 func (t *Engine) Render() []byte {
 	b := &bytes.Buffer{}
-	RenderWithBuffer(t, b)
-	return b.Bytes()
-}
-
-func RenderWithBuffer(t Template, b *bytes.Buffer) *bytes.Buffer {
+	tmpl, _ := template.ParseFiles(t.GetPath())
 	childs := t.GetChilds()
 
-	tmpl, err := template.ParseFiles(t.GetPath())
-	if childs != nil {
-		childsContent := make(map[string]string)
+	if len(childs) > 0 {
+		childsContent := make(map[string]template.HTML)
 		for n, tmp := range childs {
-			b = RenderWithBuffer(tmp, b)
-			childsContent[n] = b.String()
+			childsContent[n] = template.HTML(tmp.Render())
 		}
-		if err != nil {
-			log.Printf("[ERR ] Could not parse file. Reason: %s", err)
-			return b
-		}
-
-		// tmpl.Execute(b, childsContent)
+		tmpl.Execute(b, childsContent)
 	}
-	tmpl.Execute(b, t.GetValues())
 
-	return b
+	if t.GetValues() != nil {
+		tmpl.Execute(b, t.GetValues())
+	}
+
+	return b.Bytes()
 }
 
 func (t *Engine) AddValue(v interface{}) *Engine {
@@ -95,4 +86,8 @@ func (v *TemplateValues) Get(k string) []byte {
 	}
 
 	return val
+}
+
+func (v *TemplateValues) IsEmpty() bool {
+	return len(v.values) == 0
 }
