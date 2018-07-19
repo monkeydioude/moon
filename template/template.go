@@ -5,30 +5,37 @@ import (
 	"html/template"
 )
 
+// Template is the base interface for templating with Moon
+// Must hold base information for a template
 type Template interface {
 	GetPath() string
-	GetChilds() map[string]Template
-	GetValues() interface{}
+	GetBoundTemplates() map[string]Template
+	GetValues() Values
 	Render() []byte
 }
 
+// Values is the base interface for holding values inside a template
 type Values interface {
-	Get(string) []byte
+	Get(string) template.HTML
+	Add(string, string)
 	IsEmpty() bool
-	GetAll() interface{}
+	Values() map[string]template.HTML
 }
 
+// Engine implements Template
+// This basic templeting engine allows to build a nested tree of templates for reuse
 type Engine struct {
-	Template
-	Path   string
-	Childs map[string]Template
-	Values interface{}
+	Path      string
+	Templates map[string]Template
+	Values    *TemplateValues
 }
 
+// NewEngine produces an Engine
 func NewEngine(path string) *Engine {
 	return &Engine{
-		Path:   path,
-		Childs: make(map[string]Template),
+		Path:      path,
+		Templates: make(map[string]Template),
+		Values:    NewTemplateValues(),
 	}
 }
 
@@ -36,53 +43,57 @@ func (t *Engine) GetPath() string {
 	return t.Path
 }
 
-func (t *Engine) GetChilds() map[string]Template {
-	return t.Childs
+func (t *Engine) GetBoundTemplates() map[string]Template {
+	return t.Templates
 }
 
-func (t *Engine) GetValues() interface{} {
+func (t *Engine) GetValues() Values {
 	return t.Values
 }
 
-func (t *Engine) WithChild(path, name string) *Engine {
-	t.Childs[name] = NewEngine(path)
-	return t.Childs[name].(*Engine)
+func (t *Engine) BindTemplate(path, name string) *Engine {
+	t.Templates[name] = NewEngine(path)
+	return t.Templates[name].(*Engine)
 }
 
 func (t *Engine) Render() []byte {
 	b := &bytes.Buffer{}
 	tmpl, _ := template.ParseFiles(t.GetPath())
-	childs := t.GetChilds()
+	childs := t.GetBoundTemplates()
+	content := make(map[string]template.HTML)
 
 	if len(childs) > 0 {
-		childsContent := make(map[string]template.HTML)
 		for n, tmp := range childs {
-			childsContent[n] = template.HTML(tmp.Render())
+			content[n] = template.HTML(tmp.Render())
 		}
-		tmpl.Execute(b, childsContent)
 	}
 
-	if t.GetValues() != nil {
-		tmpl.Execute(b, t.GetValues())
-	}
+	t.Values.Merge(content)
+	tmpl.Execute(b, t.GetValues().Values())
 
 	return b.Bytes()
 }
 
-func (t *Engine) AddValue(v interface{}) *Engine {
-	t.Values = v
+func (t *Engine) AddValue(name, value string) *Engine {
+	t.Values.Add(name, value)
 	return t
 }
 
 type TemplateValues struct {
-	values map[string][]byte
+	values map[string]template.HTML
 }
 
-func (v *TemplateValues) Get(k string) []byte {
+func NewTemplateValues() *TemplateValues {
+	return &TemplateValues{
+		values: make(map[string]template.HTML),
+	}
+}
+
+func (v *TemplateValues) Get(k string) template.HTML {
 	val, ok := v.values[k]
 
 	if !ok {
-		return nil
+		return ""
 	}
 
 	return val
@@ -90,4 +101,17 @@ func (v *TemplateValues) Get(k string) []byte {
 
 func (v *TemplateValues) IsEmpty() bool {
 	return len(v.values) == 0
+}
+
+func (v *TemplateValues) Add(name, value string) {
+	v.values[name] = template.HTML(value)
+}
+func (v *TemplateValues) Values() map[string]template.HTML {
+	return v.values
+}
+
+func (v *TemplateValues) Merge(from map[string]template.HTML) {
+	for n, val := range from {
+		v.values[n] = val
+	}
 }
