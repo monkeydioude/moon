@@ -16,7 +16,6 @@ type Template interface {
 
 // Values is the base interface for holding values inside a template
 type Values interface {
-	Get(string) template.HTML
 	Add(string, string)
 	IsEmpty() bool
 	Values() map[string]template.HTML
@@ -27,7 +26,7 @@ type Values interface {
 type Engine struct {
 	Path      string
 	Templates map[string]Template
-	Values    *TemplateValues
+	Values    HTML
 }
 
 // NewEngine produces an Engine
@@ -35,7 +34,7 @@ func NewEngine(path string) *Engine {
 	return &Engine{
 		Path:      path,
 		Templates: make(map[string]Template),
-		Values:    NewTemplateValues(),
+		Values:    HTML{},
 	}
 }
 
@@ -74,44 +73,32 @@ func (t *Engine) Render() []byte {
 	return b.Bytes()
 }
 
-func (t *Engine) AddValue(name, value string) *Engine {
+func (t *Engine) BindValue(name, value string) *Engine {
 	t.Values.Add(name, value)
 	return t
 }
 
-type TemplateValues struct {
-	values map[string]template.HTML
+func (t *Engine) BindValues(values HTML) *Engine {
+	t.Values.Merge(values)
+	return t
 }
 
-func NewTemplateValues() *TemplateValues {
-	return &TemplateValues{
-		values: make(map[string]template.HTML),
-	}
+type HTML map[string]template.HTML
+
+func (h HTML) Add(n, v string) {
+	h[n] = template.HTML(v)
 }
 
-func (v *TemplateValues) Get(k string) template.HTML {
-	val, ok := v.values[k]
-
-	if !ok {
-		return ""
-	}
-
-	return val
+func (h HTML) IsEmpty() bool {
+	return len(h) == 0
 }
 
-func (v *TemplateValues) IsEmpty() bool {
-	return len(v.values) == 0
+func (h HTML) Values() map[string]template.HTML {
+	return h
 }
 
-func (v *TemplateValues) Add(name, value string) {
-	v.values[name] = template.HTML(value)
-}
-func (v *TemplateValues) Values() map[string]template.HTML {
-	return v.values
-}
-
-func (v *TemplateValues) Merge(from map[string]template.HTML) {
-	for n, val := range from {
-		v.values[n] = val
+func (h HTML) Merge(v HTML) {
+	for n, val := range v {
+		h[n] = val
 	}
 }
