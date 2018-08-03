@@ -1,3 +1,7 @@
+### 1.3.0 - 03/08/2018
+
+- remove Guide type, makes things more complicated than anything else
+
 ### 1.0.1 - 10/06/2018
 
 - Better logging in ServeHTTP.
