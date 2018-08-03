@@ -27,12 +27,9 @@ type Handler struct {
 	Routes  Routes
 }
 
-// Guide kind of acts like Middleware between low levels HandlerFunc and the response, but not exactly a Middleware
-type Guide func(*Request, *Configuration) ([]byte, int, error)
-
 // Means defines how and what method shall handle a route
 type Means struct {
-	Guide  Guide
+	Guide  func(*Request, *Configuration) ([]byte, int, error)
 	Method string
 }
 
@@ -134,7 +131,7 @@ func Moon(conf *Configuration) *Handler {
 
 // Add writes a Means in the Routes map using the regexp that will match the URI, a method and a Guide definition
 // Guide type is a callback as such function(*Request, *Configuration) ([]byte, int, error)
-func (routes *Routes) Add(r, m string, g Guide) {
+func (routes *Routes) Add(r, m string, g func(*Request, *Configuration) ([]byte, int, error)) {
 	(*routes)[r] = &Means{
 		Method: m,
 		Guide:  g,
@@ -143,12 +140,12 @@ func (routes *Routes) Add(r, m string, g Guide) {
 
 // AddGet is a wrapper around Add that forces GET method
 // Guide type is a callback as such function(*Request, *Configuration) ([]byte, int, error)
-func (routes *Routes) AddGet(r string, f Guide) {
+func (routes *Routes) AddGet(r string, f func(*Request, *Configuration) ([]byte, int, error)) {
 	routes.Add(r, "GET", f)
 }
 
 // AddPost is a wrapper around Add that forces GET method
 // Guide type is a callback as such function(*Request, *Configuration) ([]byte, int, error)
-func (routes *Routes) AddPost(r string, f Guide) {
+func (routes *Routes) AddPost(r string, f func(*Request, *Configuration) ([]byte, int, error)) {
 	routes.Add(r, "POST", f)
 }

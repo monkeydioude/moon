@@ -1,12 +1,14 @@
 package moon
 
 import (
+	"log"
 	"net/http"
 	"time"
 )
 
 // ServerRunWithConfig starts http server using http.Server configuration
 func ServerRunWithConfig(server *http.Server) error {
+	log.Printf("[INFO] Server running: %+v", server)
 	return server.ListenAndServe()
 }
 
