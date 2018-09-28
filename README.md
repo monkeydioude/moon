@@ -1,9 +1,10 @@
 ## Moon is a wrapper for http.Handler, making it way way easier to declare and handles route
+[![Build Status](https://travis-ci.org/monkeydioude/moon.svg?branch=master)](https://travis-ci.org/monkeydioude/moon)
 
 Example:
-```
+```golang
 	handler := moon.NewHandler(configuration)
-		// Me API es su API
+	// Me API es su API
 	handler.WithHeader("Access-Control-Allow-Origin", "*")
 
     	// Will call allMoons() func every time a GET on "/moon/all" URI is caught
@@ -13,7 +14,7 @@ Example:
 
     	// Start standard http.Server
 	server := &http.Server{
-		Addr:           ":9393:,
+		Addr:           ":9393:",
 		Handler:        handler,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
