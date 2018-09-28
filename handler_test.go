@@ -19,3 +19,12 @@ func TestIDoNotParseOnEmptyQueries(t *testing.T) {
 		t.Error("ParseQueryString's second parameter should have stayed empty")
 	}
 }
+
+func TestICanParseASingleQuery(t *testing.T) {
+	qs := make(map[string]string)
+	ParseQueryString("wesh=alors", &qs)
+
+	if qs["wesh"] != "alors" {
+		t.Error("Did not parse query string as intended")
+	}
+}

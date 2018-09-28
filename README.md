@@ -3,15 +3,15 @@
 Example:
 ```
 	handler := moon.NewHandler(configuration)
-    // Me API es su API
+		// Me API es su API
 	handler.WithHeader("Access-Control-Allow-Origin", "*")
 
-    // Will call allMoons() func every time a GET on "/moon/all" URI is caught
+    	// Will call allMoons() func every time a GET on "/moon/all" URI is caught
 	handler.Routes.AddGet("moon/all", allMoons)
-    // Will call lolStop() func every time a GET on "/moon/moon" URI is caught
+    	// Will call lolStop() func every time a GET on "/moon/moon" URI is caught
 	handler.Routes.AddGet("moon/moon", lolStop)
 
-    // Start standard http.Server
+    	// Start standard http.Server
 	server := &http.Server{
 		Addr:           ":9393:,
 		Handler:        handler,
