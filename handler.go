@@ -9,11 +9,13 @@ import (
 	"github.com/monkeydioude/tools"
 )
 
-// Configuration holds service configuration. Typically used for passing configuration container in a file to the Guide
+// Configuration holds service configuration.
+// Typically used for passing configuration container in a file to the
+// function matching a route
 type Configuration map[string]string
 
 // Routes matching URIs go here. Key of the map must hold the Regexp matching an URI
-type Routes map[string]*Means
+type Routes map[string]*Route
 
 // ResponseHeader is a classic map[string]string header container,
 // but explicitly describes that the header will be used for the Response.
@@ -27,13 +29,14 @@ type Handler struct {
 	Routes  Routes
 }
 
-// Means defines how and what method shall handle a route
-type Means struct {
+// Route defines how and what method shall handle a route
+type Route struct {
 	Guide  func(*Request, *Configuration) ([]byte, int, error)
 	Method string
 }
 
-// Request contains the wish of an user passed to a Guide
+// Request contains data that should be passed to the function matching a route
+// @see (routes *Routes) Add(r, m string, g func(*Request, *Configuration) ([]byte, int, error))
 type Request struct {
 	Matches     []string
 	QueryString map[string]string
@@ -64,16 +67,14 @@ func newRequest(m []string, h *http.Header, q map[string]string) *Request {
 }
 
 // ParseQueryString parses URI in search of query string
-func ParseQueryString(queries string) (qs map[string]string) {
+func ParseQueryString(queries string, qs *map[string]string) {
 	for _, q := range strings.Split(queries, "&") {
 		p := strings.Split(q, "=")
 		if len(p) != 2 {
 			continue
 		}
-		qs[p[0]] = p[1]
+		(*qs)[p[0]] = p[1]
 	}
-
-	return
 }
 
 func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
@@ -89,17 +90,15 @@ func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		}
 
 		uri := strings.Split(r.RequestURI, "?")
-
 		v, err := tools.MatchAndFind(p, strings.Trim(uri[0], "/"))
-
 		if err != nil {
 			continue
 		}
 
-		var q map[string]string
+		q := make(map[string]string)
 
 		if len(uri) == 2 {
-			q = ParseQueryString(uri[1])
+			ParseQueryString(uri[1], &q)
 		}
 
 		data, _, err := route.Guide(newRequest(v, &r.Header, q), h.config)
@@ -129,10 +128,10 @@ func Moon(conf *Configuration) *Handler {
 	return NewHandler(conf)
 }
 
-// Add writes a Means in the Routes map using the regexp that will match the URI, a method and a Guide definition
+// Add writes a Route in the Routes map using the regexp that will match the URI, a method and a Guide definition
 // Guide type is a callback as such function(*Request, *Configuration) ([]byte, int, error)
 func (routes *Routes) Add(r, m string, g func(*Request, *Configuration) ([]byte, int, error)) {
-	(*routes)[r] = &Means{
+	(*routes)[r] = &Route{
 		Method: m,
 		Guide:  g,
 	}
