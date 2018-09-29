@@ -1,37 +1,41 @@
 ## Moon is a wrapper for http.Handler, making it way way easier to declare and handles route
 [![Build Status](https://travis-ci.org/monkeydioude/moon.svg?branch=master)](https://travis-ci.org/monkeydioude/moon)
 
-Example:
+Simple example:
 ```golang
-	handler := moon.NewHandler(configuration)
-	// Me API es su API
-	handler.WithHeader("Access-Control-Allow-Origin", "*")
-
-    	// Will call allMoons() func every time a GET on "/moon/all" URI is caught
-	handler.Routes.AddGet("moon/all", allMoons)
-    	// Will call lolStop() func every time a GET on "/moon/moon" URI is caught
-	handler.Routes.AddGet("moon/moon", lolStop)
-
-    	// Start standard http.Server
-	server := &http.Server{
-		Addr:           ":9393:",
-		Handler:        handler,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
+	func routeHandler1(r *moon.Request, c *moon.Configuration) ([]byte, int, error) {
+		return []byte("hello"), 200, nil
 	}
 
-	log.Println("[INFO] Starting server")
-	if err := server.ListenAndServe(); err != nil {
-		fmt.Println(err)
+	func main() {
+		h := moon.Moon(nil)
+		// Me API es su API
+		h.WithHeader("Access-Control-Allow-Origin", "*")
+
+		// Will call routeHandler1() func every time a GET on "/route1" URI is caught
+		h.Routes.AddGet("route1", routeHandler1)
+
+		// Server will run localhost port 8080
+		moon.ServerRun(":8080", h)
 	}
 ```
 
+### Handlers
+Take:
+- a `*moon.Request` containing a simplified HTTP Request (Parts of the uri matched, query string & headers)
+- a `*moon.Configuration` basically a map[string]string containing the data passed to Moon (`config` in the example above)
+
+Return:
+- `[]byte` containing the text response
+- `int`, as the http status code
+- `error`, as an error, for logging purpose
+
+### [Detailed example(s) available here](./examples)
+
 See [Moon's GoDoc](https://godoc.org/github.com/monkeydioude/moon) for Documentation.
 
-Lacks:
+This project still lacks:
 - Tests
 - Benchs
 - Matching without using RegExp ?
 - Response Caching ?
-- More Lazy-Win funcs ?

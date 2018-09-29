@@ -10,7 +10,7 @@ import (
 )
 
 // Configuration holds service configuration.
-// Typically used for passing configuration container in a file to the
+// Typically used for passing configuration from, for example, a file to the
 // function matching a route
 type Configuration map[string]string
 
