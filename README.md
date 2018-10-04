@@ -23,7 +23,7 @@ Simple example:
 ### Handlers
 Take:
 - a `*moon.Request` containing a simplified HTTP Request (Parts of the uri matched, query string & headers)
-- a `*moon.Configuration` basically a map[string]string containing the data passed to Moon (`config` in the example above)
+- a `*moon.Configuration` basically a map[string]string containing the data passed to Moon
 
 Return:
 - `[]byte` containing the text response
