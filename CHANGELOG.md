@@ -1,3 +1,7 @@
+### 1.5.0 - 19/12/2018
+
+- remove Configuration from handler func
+
 ### 1.4.0 - 04/10/2018
 
 - add example
