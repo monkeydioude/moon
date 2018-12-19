@@ -38,6 +38,7 @@ type Route struct {
 // Request contains data that should be passed to the function matching a route
 // @see (routes *Routes) Add(r, m string, g func(*Request, *Configuration) ([]byte, int, error))
 type Request struct {
+	HTTPRequest *http.Request
 	Matches     []string
 	QueryString map[string]string
 	Header      *http.Header
@@ -58,8 +59,9 @@ func (h *Handler) applyHeaders(rw http.ResponseWriter) {
 }
 
 // newRequest generates a Request from URI parsing & headers. Used in ServeHTTP
-func newRequest(m []string, h *http.Header, q map[string]string) *Request {
+func newRequest(m []string, h *http.Header, q map[string]string, r *http.Request) *Request {
 	return &Request{
+		HTTPRequest: r,
 		Matches:     m,
 		Header:      h,
 		QueryString: q,
@@ -101,7 +103,7 @@ func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 			ParseQueryString(uri[1], &q)
 		}
 
-		data, _, err := route.Guide(newRequest(v, &r.Header, q), h.config)
+		data, _, err := route.Guide(newRequest(v, &r.Header, q, r), h.config)
 		if err != nil {
 			log.Printf("[ERR ] Error while Guiding. Reason: %s\n", err)
 			tools.HttpNotFound(rw)
