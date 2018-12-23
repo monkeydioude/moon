@@ -1,3 +1,8 @@
+### 1.6.0 - 23/12/2018
+
+- split router methods
+- add conveniant way to create a router
+
 ### 1.5.0 - 19/12/2018
 
 - remove Configuration from handler func
