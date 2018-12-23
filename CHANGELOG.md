@@ -1,3 +1,7 @@
+### 1.6.1 - 23/12/2018
+
+- removing "/" trimming in URL matching
+
 ### 1.6.0 - 23/12/2018
 
 - split router methods
