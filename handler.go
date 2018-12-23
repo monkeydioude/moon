@@ -89,7 +89,7 @@ func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		}
 
 		uri := strings.Split(r.RequestURI, "?")
-		v, err := tools.MatchAndFind(p, strings.Trim(uri[0], "/"))
+		v, err := tools.MatchAndFind(p, uri[0])
 		if err != nil {
 			continue
 		}
