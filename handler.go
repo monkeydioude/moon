@@ -20,6 +20,18 @@ type Handler struct {
 	Routes  Routes
 }
 
+// NewHandler generates a Handler.
+func NewHandler() *Handler {
+	return &Handler{
+		Routes: make(Routes),
+	}
+}
+
+// Moon Moon ??!1! lol stop it
+func Moon() *Handler {
+	return NewHandler()
+}
+
 // Request contains data that should be passed to the function matching a route
 // @see (routes *Routes) Add(r, m string, g func(*Request) ([]byte, int, error))
 type Request struct {
@@ -106,16 +118,4 @@ func (h *Handler) MakeRouter(routes ...*Route) {
 	for _, r := range routes {
 		h.Routes[r.ID] = r
 	}
-}
-
-// NewHandler generates a Handler.
-func NewHandler() *Handler {
-	return &Handler{
-		Routes: make(Routes),
-	}
-}
-
-// Moon Moon ??!1! lol stop it
-func Moon() *Handler {
-	return NewHandler()
 }
