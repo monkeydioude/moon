@@ -9,14 +9,6 @@ import (
 	"github.com/monkeydioude/tools"
 )
 
-// Configuration holds service configuration.
-// Typically used for passing configuration from, for example, a file to the
-// function matching a route
-type Configuration map[string]string
-
-// Routes matching URIs go here. Key of the map must hold the Regexp matching an URI
-type Routes map[string]*Route
-
 // ResponseHeader is a classic map[string]string header container,
 // but explicitly describes that the header will be used for the Response.
 // Example: "Access-Control-Allow-Origin" should be passed here
@@ -24,19 +16,12 @@ type ResponseHeader map[string]string
 
 // Handler is the core. Contains the Configuration, Response Header and Routes
 type Handler struct {
-	config  *Configuration
 	headers ResponseHeader
 	Routes  Routes
 }
 
-// Route defines how and what method shall handle a route
-type Route struct {
-	Guide  func(*Request, *Configuration) ([]byte, int, error)
-	Method string
-}
-
 // Request contains data that should be passed to the function matching a route
-// @see (routes *Routes) Add(r, m string, g func(*Request, *Configuration) ([]byte, int, error))
+// @see (routes *Routes) Add(r, m string, g func(*Request) ([]byte, int, error))
 type Request struct {
 	HTTPRequest *http.Request
 	Matches     []string
@@ -44,8 +29,8 @@ type Request struct {
 	Header      *http.Header
 }
 
-// WithHeader specifies headers used in the response
-func (h *Handler) WithHeader(k, v string) {
+// AddHeader specifies headers used in the response
+func (h *Handler) AddHeader(k, v string) {
 	if h.headers == nil {
 		h.headers = make(map[string]string)
 	}
@@ -103,7 +88,7 @@ func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 			ParseQueryString(uri[1], &q)
 		}
 
-		data, _, err := route.Guide(newRequest(v, &r.Header, q, r), h.config)
+		data, _, err := route.Guide(newRequest(v, &r.Header, q, r))
 		if err != nil {
 			log.Printf("[ERR ] Error while Guiding. Reason: %s\n", err)
 			tools.HttpNotFound(rw)
@@ -117,36 +102,20 @@ func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	tools.HttpNotFound(rw)
 }
 
-// NewHandler generates a Handler from a *Configuration.
-func NewHandler(conf *Configuration) *Handler {
+func (h *Handler) MakeRouter(routes ...*Route) {
+	for _, r := range routes {
+		h.Routes[r.ID] = r
+	}
+}
+
+// NewHandler generates a Handler.
+func NewHandler() *Handler {
 	return &Handler{
-		config: conf,
 		Routes: make(Routes),
 	}
 }
 
 // Moon Moon ??!1! lol stop it
-func Moon(conf *Configuration) *Handler {
-	return NewHandler(conf)
-}
-
-// Add writes a Route in the Routes map using the regexp that will match the URI, a method and a Guide definition
-// Guide type is a callback as such function(*Request, *Configuration) ([]byte, int, error)
-func (routes *Routes) Add(r, m string, g func(*Request, *Configuration) ([]byte, int, error)) {
-	(*routes)[r] = &Route{
-		Method: m,
-		Guide:  g,
-	}
-}
-
-// AddGet is a wrapper around Add that forces GET method
-// Guide type is a callback as such function(*Request, *Configuration) ([]byte, int, error)
-func (routes *Routes) AddGet(r string, f func(*Request, *Configuration) ([]byte, int, error)) {
-	routes.Add(r, "GET", f)
-}
-
-// AddPost is a wrapper around Add that forces GET method
-// Guide type is a callback as such function(*Request, *Configuration) ([]byte, int, error)
-func (routes *Routes) AddPost(r string, f func(*Request, *Configuration) ([]byte, int, error)) {
-	routes.Add(r, "POST", f)
+func Moon() *Handler {
+	return NewHandler()
 }
