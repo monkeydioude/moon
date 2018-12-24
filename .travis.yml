@@ -2,4 +2,6 @@ language: go
 go:
   - "1.11"
 
-script: go test
+script: 
+  - go test
+  - cd pkg/purl && go test

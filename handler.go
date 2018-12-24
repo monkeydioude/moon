@@ -17,13 +17,13 @@ type ResponseHeader map[string]string
 // Handler is the core. Contains the Configuration, Response Header and Routes
 type Handler struct {
 	headers ResponseHeader
-	Routes  Routes
+	Routes  map[string]Routes
 }
 
 // NewHandler generates a Handler.
 func NewHandler() *Handler {
 	return &Handler{
-		Routes: make(Routes),
+		Routes: make(map[string]Routes),
 	}
 }
 
@@ -72,10 +72,11 @@ func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 	h.applyHeaders(rw)
 
-	for p, route := range h.Routes {
-		if route.Method != r.Method {
+	for p, mRoute := range h.Routes {
+		if _, ok := mRoute[r.Method]; !ok {
 			continue
 		}
+		route := mRoute[r.Method]
 
 		parser := purl.NewUrlParser()
 		if !parser.Match(p, r.RequestURI) {
@@ -105,6 +106,9 @@ func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) MakeRouter(routes ...*Route) {
 	for _, r := range routes {
-		h.Routes[r.ID] = r
+		if _, ok := h.Routes[r.ID]; !ok {
+			h.Routes[r.ID] = make(Routes)
+		}
+		h.Routes[r.ID][r.Method] = r
 	}
 }
