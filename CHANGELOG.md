@@ -1,3 +1,9 @@
+### 2.0.1 - 24/12/2018
+
+- add purl tests to travis build
+- remove handler tests
+- now storing routes using Route pattern and Method as identifiers (meaning it is possible to apply multiple handlers to a same route but method has to be different, else there will have handlers overwrite)
+
 ### 2.0.0 - 24/12/2018
 
 - Use of Purl inside routing system
