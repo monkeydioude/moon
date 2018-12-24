@@ -1,3 +1,11 @@
+### 2.0.0 - 24/12/2018
+
+- Use of Purl inside routing system
+- Moon routes are now defined using curly brackets patterns (aka Mustacho patterns). Ex: `/user/{action}/doggo`
+- `Matches` received in `moon.Request` is now a `map[string]string`, previously `[]string`
+- Mustacho patterns matching a route will now create a key containing its value in `request.Matches`. Ex: `/user/{action}/doggo` => `/user/good/doggo` => `request.Matches["action"] == "good`
+
+
 ### 1.6.1 - 23/12/2018
 
 - removing "/" trimming in URL matching
