@@ -2,7 +2,7 @@
 
 - add purl tests to travis build
 - remove handler tests
-- now storing routes using Route pattern and Method as identifiers (meaning it is possible to apply multiple handlers to a same route but method has to be different, else there will have handlers overwrite)
+- now storing routes using Route pattern and Method as identifiers (meaning it is possible to apply multiple handlers to a same route but method has to be different, else handlers overwrite will happen)
 
 ### 2.0.0 - 24/12/2018
 
@@ -10,7 +10,6 @@
 - Moon routes are now defined using curly brackets patterns (aka Mustacho patterns). Ex: `/user/{action}/doggo`
 - `Matches` received in `moon.Request` is now a `map[string]string`, previously `[]string`
 - Mustacho patterns matching a route will now create a key containing its value in `request.Matches`. Ex: `/user/{action}/doggo` => `/user/good/doggo` => `request.Matches["action"] == "good`
-
 
 ### 1.6.1 - 23/12/2018
 
