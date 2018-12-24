@@ -1,7 +1,6 @@
 package purl
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -10,7 +9,7 @@ func TestKeyMatcherCanMatchSimpleString(t *testing.T) {
 	url := "/a/b/c/d/"
 	p := NewKeyMatcher("{}")
 
-	if !p.Match([]byte(trial), []byte(url)) {
+	if !p.Match([]byte(url), []byte(trial)) {
 		t.Fail()
 	}
 }
@@ -19,11 +18,9 @@ func TestKeyMatcherCanMatch(t *testing.T) {
 	url := "/test/alors/3/ccool//2/3/4"
 	p := NewKeyMatcher("{}")
 
-	p.Match([]byte(trial), []byte(url))
+	p.Match([]byte(url), []byte(trial))
 	m := p.GetMatches()
 
-	fmt.Println(len(m))
-	fmt.Printf("%+v\n", m)
 	if len(m) != 3 {
 		t.Fail()
 	}

@@ -1,22 +1,25 @@
 package purl
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestICanParseFullUrl(t *testing.T) {
-	p := New(&dummyMatcher{}, &dummyMatcher{})
-	if !p.MatchPath("/{pouet}/", "/pouet/?king=dadidou") {
+	p := New(NewKeyMatcher("{}"), NewQueryStringMatcher())
+
+	if !p.Match("/{pouet}/", "/pouet/?roi=dadidou") ||
+		p.GetPathMatches()["pouet"] != "pouet" ||
+		p.GetQueryStringMatches()["roi"] != "dadidou" {
 		t.Fail()
 	}
 }
 
-type dummyMatcher struct {
-	matches map[string]string
-}
+func TestICanParseUrlWithoutQueryString(t *testing.T) {
+	p := New(NewKeyMatcher("{}"), NewQueryStringMatcher())
 
-func (d *dummyMatcher) Match(t, p []byte) bool {
-	return true
-}
-
-func (d *dummyMatcher) GetMatches() map[string]string {
-	return d.matches
+	if !p.Match("/{isthislove}/", "/thatimfeelin/") ||
+		p.GetPathMatches()["isthislove"] != "thatimfeelin" ||
+		len(p.GetQueryStringMatches()) > 0 {
+		t.Fail()
+	}
 }

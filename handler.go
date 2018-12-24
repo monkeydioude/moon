@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
+	"github.com/monkeydioude/moon/pkg/purl"
 	"github.com/monkeydioude/tools"
 )
 
@@ -36,7 +36,7 @@ func Moon() *Handler {
 // @see (routes *Routes) Add(r, m string, g func(*Request) ([]byte, int, error))
 type Request struct {
 	HTTPRequest *http.Request
-	Matches     []string
+	Matches     map[string]string
 	QueryString map[string]string
 	Header      *http.Header
 }
@@ -56,23 +56,12 @@ func (h *Handler) applyHeaders(rw http.ResponseWriter) {
 }
 
 // newRequest generates a Request from URI parsing & headers. Used in ServeHTTP
-func newRequest(m []string, h *http.Header, q map[string]string, r *http.Request) *Request {
+func newRequest(m map[string]string, h *http.Header, q map[string]string, r *http.Request) *Request {
 	return &Request{
 		HTTPRequest: r,
 		Matches:     m,
 		Header:      h,
 		QueryString: q,
-	}
-}
-
-// ParseQueryString parses URI in search of query string
-func ParseQueryString(queries string, qs *map[string]string) {
-	for _, q := range strings.Split(queries, "&") {
-		p := strings.Split(q, "=")
-		if len(p) != 2 {
-			continue
-		}
-		(*qs)[p[0]] = p[1]
 	}
 }
 
@@ -88,19 +77,19 @@ func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		uri := strings.Split(r.RequestURI, "?")
-		v, err := tools.MatchAndFind(p, uri[0])
-		if err != nil {
+		parser := purl.NewUrlParser()
+		if !parser.Match(p, r.RequestURI) {
 			continue
 		}
 
-		q := make(map[string]string)
-
-		if len(uri) == 2 {
-			ParseQueryString(uri[1], &q)
-		}
-
-		data, _, err := route.Guide(newRequest(v, &r.Header, q, r))
+		data, _, err := route.Guide(
+			newRequest(
+				parser.GetPathMatches(),
+				&r.Header,
+				parser.GetQueryStringMatches(),
+				r,
+			),
+		)
 		if err != nil {
 			log.Printf("[ERR ] Error while Guiding. Reason: %s\n", err)
 			tools.HttpNotFound(rw)

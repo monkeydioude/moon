@@ -18,9 +18,9 @@ func NewKeyMatcher(pattern string) *KeyMatcher {
 	}
 }
 
-func (m *KeyMatcher) Match(match, trial []byte) bool {
-	var key bytes.Buffer
-	var value bytes.Buffer
+func (m *KeyMatcher) Match(trial, match []byte) bool {
+	key := &bytes.Buffer{}
+	value := &bytes.Buffer{}
 	it := 0
 	im := 0
 	lm := len(match)
