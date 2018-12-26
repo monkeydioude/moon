@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/monkeydioude/moon/pkg/purl"
 	"github.com/monkeydioude/tools"
@@ -37,7 +38,7 @@ func Moon() *Handler {
 type Request struct {
 	HTTPRequest *http.Request
 	Matches     map[string]string
-	QueryString map[string]string
+	QueryString url.Values
 	Header      *http.Header
 }
 
@@ -56,7 +57,7 @@ func (h *Handler) applyHeaders(rw http.ResponseWriter) {
 }
 
 // newRequest generates a Request from URI parsing & headers. Used in ServeHTTP
-func newRequest(m map[string]string, h *http.Header, q map[string]string, r *http.Request) *Request {
+func newRequest(m map[string]string, h *http.Header, q url.Values, r *http.Request) *Request {
 	return &Request{
 		HTTPRequest: r,
 		Matches:     m,
