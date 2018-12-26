@@ -36,14 +36,21 @@ func example1(r *moon.Request) ([]byte, int, error) {
 		"%%@@@@@@@@@@@@@@@00000000000000000000000000000@@@@@@@@@%%%%%"), 200, nil
 }
 
+func example1bis(r *moon.Request) ([]byte, int, error) {
+	// This will print (wesh) the "ex2" parameter matched from the Route Pattern below
+	return []byte(r.Matches["ex1"]), 200, nil
+}
+
 func main() {
 	server := moon.Moon()
 	// Me API es su API
 	server.AddHeader("Access-Control-Allow-Origin", "*")
 
-	// Will call example1() func every time a GET on "/example1" URI is caught
 	server.MakeRouter(
+		// Will call example1() func every time a GET on "/example1" URI is caught
 		moon.Get("/example1", example1),
+		// This will match any "/example1/*" GET request. Visitng "/example1/wesh" URL will print "wesh"
+		moon.Get("/example1/{ex1}", example1bis),
 	)
 
 	moon.ServerRun(":8080", server)

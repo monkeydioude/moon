@@ -3,27 +3,31 @@
 
 Simple example:
 ```golang
-	func routeHandler1(r *moon.Request, c *moon.Configuration) ([]byte, int, error) {
-		return []byte("hello"), 200, nil
-	}
-
 	func main() {
-		h := moon.Moon(nil)
+		server := moon.Moon()
 		// Me API es su API
-		h.WithHeader("Access-Control-Allow-Origin", "*")
+		server.AddHeader("Access-Control-Allow-Origin", "*")
 
-		// Will call routeHandler1() func every time a GET on "/route1" URI is caught
-		h.Routes.AddGet("route1", routeHandler1)
+		server.MakeRouter(
+			// Will call routeHandler1() func every time a GET on "/handler1" URI is caught
+			moon.Get("/handler1", routeHandler1),
+			// This will match any "/handler1/*" GET request and create a "param1" parameter 
+			// in moon.Request.Matches containing the matched value by the {param1} pattern
+			moon.Get("/handler1/{param1}", routeHandler1bis),
+		)
 
-		// Server will run localhost port 8080
-		moon.ServerRun(":8080", h)
+		moon.ServerRun(":8080", server)
 	}
 ```
+
+### What it does
+- Define routes using Patterns and a HTTP method
+- Not use Regexp for Route Pattern matching
+- Give matched parts of the Route Pattern as well as any query strings inside the `moon.Request` 
 
 ### Handlers
 Take:
 - a `*moon.Request` containing a simplified HTTP Request (Parts of the uri matched, query string & headers)
-- a `*moon.Configuration` basically a map[string]string containing the data passed to Moon
 
 Return:
 - `[]byte` containing the text response
@@ -35,7 +39,7 @@ Return:
 See [Moon's GoDoc](https://godoc.org/github.com/monkeydioude/moon) for Documentation.
 
 This project still lacks:
-- Tests
+- Tests (ongoing)
 - Benchs
-- Matching without using RegExp ?
+- ~~Matching without using RegExp ?~~
 - Response Caching ?
