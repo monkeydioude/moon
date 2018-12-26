@@ -38,7 +38,7 @@ func example1(r *moon.Request, c *moon.Configuration) ([]byte, int, error) {
 
 func main() {
 
-	h := moon.Moon(nil)
+	h := moon.Moon()
 	// Me API es su API
 	h.WithHeader("Access-Control-Allow-Origin", "*")
 
