@@ -1,3 +1,7 @@
+### 2.1.0 - 26/12/2018
+
+- remove query string parser, use std lib one
+
 ### 2.0.1 - 24/12/2018
 
 - add purl tests to travis build
