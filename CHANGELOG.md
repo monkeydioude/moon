@@ -1,3 +1,7 @@
+### 2.1.1 - 26/12/2018
+
+- wops forgot fixes... really need tests from 2.1.0 in `handlers` 
+
 ### 2.1.0 - 26/12/2018
 
 - remove query string parser, use std lib one
