@@ -4,7 +4,7 @@ import (
 	"github.com/monkeydioude/moon"
 )
 
-func example1(r *moon.Request, c *moon.Configuration) ([]byte, int, error) {
+func example1(r *moon.Request) ([]byte, int, error) {
 	return []byte("" +
 		"                               ..,,,,,,,,,.. \n" +
 		"                        .,;%%%%%%%%%%%%%%%%%%%%;,. \n" +
@@ -37,12 +37,14 @@ func example1(r *moon.Request, c *moon.Configuration) ([]byte, int, error) {
 }
 
 func main() {
-
-	h := moon.Moon()
+	server := moon.Moon()
 	// Me API es su API
-	h.WithHeader("Access-Control-Allow-Origin", "*")
+	server.AddHeader("Access-Control-Allow-Origin", "*")
 
 	// Will call example1() func every time a GET on "/example1" URI is caught
-	h.Routes.AddGet("example1", example1)
-	moon.ServerRun(":8080", h)
+	server.MakeRouter(
+		moon.Get("/example1", example1),
+	)
+
+	moon.ServerRun(":8080", server)
 }
