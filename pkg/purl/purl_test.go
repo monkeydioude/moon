@@ -5,21 +5,20 @@ import (
 )
 
 func TestICanParseFullUrl(t *testing.T) {
-	p := New(NewKeyMatcher("{}"), NewQueryStringMatcher())
+	p := New(NewKeyMatcher("{}"))
 
 	if !p.Match("/{pouet}/", "/pouet/?roi=dadidou") ||
 		p.GetPathMatches()["pouet"] != "pouet" ||
-		p.GetQueryStringMatches()["roi"] != "dadidou" {
+		p.GetQueryStringMatches().Get("roi") != "dadidou" {
 		t.Fail()
 	}
 }
 
 func TestICanParseUrlWithoutQueryString(t *testing.T) {
-	p := New(NewKeyMatcher("{}"), NewQueryStringMatcher())
+	p := New(NewKeyMatcher("{}"))
 
 	if !p.Match("/{isthislove}/", "/thatimfeelin/") ||
-		p.GetPathMatches()["isthislove"] != "thatimfeelin" ||
-		len(p.GetQueryStringMatches()) > 0 {
+		p.GetPathMatches()["isthislove"] != "thatimfeelin" {
 		t.Fail()
 	}
 }
