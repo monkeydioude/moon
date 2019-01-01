@@ -5,8 +5,8 @@ import (
 )
 
 func TestKeyMatcherCanMatchSimpleString(t *testing.T) {
-	trial := "/a/b/c/d/"
-	url := "/a/b/c/d/"
+	trial := "/image/{id}"
+	url := "/image/04713a0d49f030a254bdd2d61742bf1ee1546360281"
 	p := NewKeyMatcher("{}")
 
 	if !p.Match([]byte(url), []byte(trial)) {

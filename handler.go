@@ -101,7 +101,7 @@ func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(rw, string(data))
 		return
 	}
-	log.Printf("[WARN] '%s' did not match any route\n", r.RequestURI)
+	log.Printf("[WARN] %s '%s' did not match any route\n", r.Method, r.RequestURI)
 	tools.HttpNotFound(rw)
 }
 

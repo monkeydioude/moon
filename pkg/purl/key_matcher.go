@@ -24,10 +24,11 @@ func (m *KeyMatcher) Match(trial, match []byte) bool {
 	it := 0
 	im := 0
 	lm := len(match)
+	lt := len(trial)
 
 	for im < lm {
 		if !m.pattern.Match(match[im]) {
-			if match[im] != trial[it] {
+			if it < lt && match[im] != trial[it] {
 				return false
 			}
 			it++

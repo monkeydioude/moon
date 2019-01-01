@@ -35,7 +35,11 @@ func (p *Purl) GetPathMatches() map[string]string {
 }
 
 func (p *Purl) MatchQueryString(u string) bool {
-	v, err := url.ParseQuery(u[strings.IndexByte(u, '?')+1:])
+	iindex := strings.IndexByte(u, '?')
+	if iindex == -1 {
+		return true
+	}
+	v, err := url.ParseQuery(u[iindex+1:])
 
 	if err != nil {
 		return false
