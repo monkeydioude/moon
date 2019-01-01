@@ -1,16 +1,23 @@
+### 2.1.2 - 01/01/2019
+
+- Fix case where Purl could segfault on trial string
+- Remove whole URL from Purl matches URL has no query string
+- Modify test to be a little more complicated
+- Modify 404 log message to include HTTP method
+
 ### 2.1.1 - 26/12/2018
 
-- wops forgot fixes... really need tests from 2.1.0 in `handlers` 
+- Wops forgot fixes... really need tests from 2.1.0 in `handlers` 
 
 ### 2.1.0 - 26/12/2018
 
-- remove query string parser, use std lib one
+- Remove query string parser, use std lib one
 
 ### 2.0.1 - 24/12/2018
 
-- add purl tests to travis build
-- remove handler tests
-- now storing routes using Route pattern and Method as identifiers (meaning it is possible to apply multiple handlers to a same route but method has to be different, else handlers overwrite will happen)
+- Add purl tests to travis build
+- Remove handler tests
+- Now storing routes using Route pattern and Method as identifiers (meaning it is possible to apply multiple handlers to a same route but method has to be different, else handlers overwrite will happen)
 
 ### 2.0.0 - 24/12/2018
 
@@ -21,27 +28,27 @@
 
 ### 1.6.1 - 23/12/2018
 
-- removing "/" trimming in URL matching
+- Removing "/" trimming in URL matching
 
 ### 1.6.0 - 23/12/2018
 
-- split router methods
-- add conveniant way to create a router
+- Split router methods
+- Add conveniant way to create a router
 
 ### 1.5.0 - 19/12/2018
 
-- remove Configuration from handler func
+- Remove Configuration from handler func
 
 ### 1.4.0 - 04/10/2018
 
-- add example
-- fix bug in ParseQueryString and add tests for it
-- better README.md
-- thanks @scolalongo :)
+- Add example
+- Fix bug in ParseQueryString and add tests for it
+- Better README.md
+- Thanks @scolalongo :)
 
 ### 1.3.0 - 03/08/2018
 
-- remove Guide type, makes things more complicated than anything else
+- Remove Guide type, makes things more complicated than anything else
 
 ### 1.0.1 - 10/06/2018
 
