@@ -4,6 +4,7 @@ import (
 	"github.com/monkeydioude/moon"
 )
 
+// a dogo
 func example1(r *moon.Request) ([]byte, int, error) {
 	return []byte("" +
 		"                               ..,,,,,,,,,.. \n" +
@@ -37,7 +38,7 @@ func example1(r *moon.Request) ([]byte, int, error) {
 }
 
 func example1bis(r *moon.Request) ([]byte, int, error) {
-	// This will print (wesh) the "ex2" parameter matched from the Route Pattern below
+	// This will print (wesh) the "ex1" parameter matched from the Route Pattern below
 	return []byte(r.Matches["ex1"]), 200, nil
 }
 

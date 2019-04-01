@@ -26,6 +26,10 @@ Simple example:
 - Give matched parts of the Route Pattern as well as any query strings inside the `moon.Request` 
 
 ### Handlers
+```golang
+	func aHandler(r *moon.Request) ([]byte, int, error)
+```
+
 Take:
 - a `*moon.Request` containing a simplified HTTP Request (Parts of the uri matched, query string & headers)
 
@@ -33,6 +37,8 @@ Return:
 - `[]byte` containing the text response
 - `int`, as the http status code
 - `error`, as an error, for logging purpose
+
+
 
 ### [Detailed example(s) available here](./examples)
 
