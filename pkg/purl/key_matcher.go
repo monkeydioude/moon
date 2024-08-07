@@ -6,8 +6,6 @@ import (
 
 type KeyMatcher struct {
 	pattern *Pattern
-	it      int
-	over    bool
 	matches map[string]string
 }
 
@@ -25,7 +23,6 @@ func (m *KeyMatcher) Match(trial, match []byte) bool {
 	im := 0
 	lm := len(match)
 	lt := len(trial)
-
 	for im < lm {
 		if !m.pattern.Match(match[im]) {
 			if it < lt && match[im] != trial[it] {
@@ -60,7 +57,7 @@ func (m *KeyMatcher) Match(trial, match []byte) bool {
 		// Recovers the value from "trial", until it meets the same
 		// character (:< ghetto) right after the end of the pattern
 		// in "match"
-		for it < len(trial) && trial[it] != match[im] {
+		for it < len(trial) && trial[it] != match[im] && trial[it] != '/' {
 			value.WriteByte(trial[it])
 			it++
 		}
@@ -71,7 +68,12 @@ func (m *KeyMatcher) Match(trial, match []byte) bool {
 		m.pattern.Reset()
 	}
 
-	return true
+	fLen := lm
+	for key, value := range m.matches {
+		fLen = fLen - len(m.pattern.p) - len(key) + len(value)
+	}
+
+	return fLen == lt
 }
 
 func (m *KeyMatcher) GetMatches() map[string]string {

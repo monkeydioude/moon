@@ -77,8 +77,8 @@ func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		if _, ok := mRoute[r.Method]; !ok {
 			continue
 		}
-		route := mRoute[r.Method]
 
+		route := mRoute[r.Method]
 		parser := purl.NewUrlParser()
 		if !parser.Match(p, r.RequestURI) {
 			continue

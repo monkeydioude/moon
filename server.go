@@ -8,7 +8,7 @@ import (
 
 // ServerRunWithConfig starts http server using http.Server configuration
 func ServerRunWithConfig(server *http.Server) error {
-	log.Printf("[INFO] Server running: %+v", server)
+	log.Printf("[INFO] Server running: %+v, on: %s", server.Handler, server.Addr)
 	return server.ListenAndServe()
 }
 

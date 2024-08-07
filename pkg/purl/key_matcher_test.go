@@ -44,3 +44,13 @@ func TestKeyMatcherFailOnNonMatchingString(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestWontMatchPartialRoute(t *testing.T) {
+	trial := "/hey"
+	url := "/hey/{id}"
+	p := NewKeyMatcher("{}")
+
+	if p.Match([]byte(trial), []byte(url)) {
+		t.Fail()
+	}
+}

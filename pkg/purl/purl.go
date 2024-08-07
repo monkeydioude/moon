@@ -40,7 +40,6 @@ func (p *Purl) MatchQueryString(u string) bool {
 		return true
 	}
 	v, err := url.ParseQuery(u[iindex+1:])
-
 	if err != nil {
 		return false
 	}

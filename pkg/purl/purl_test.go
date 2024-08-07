@@ -17,8 +17,16 @@ func TestICanParseFullUrl(t *testing.T) {
 func TestICanParseUrlWithoutQueryString(t *testing.T) {
 	p := New(NewKeyMatcher("{}"))
 
-	if !p.Match("/{isthislove}/", "/thatimfeelin/") ||
+	if !p.Match("/{isthislove}/isthislove", "/thatimfeelin/isthislove") ||
 		p.GetPathMatches()["isthislove"] != "thatimfeelin" {
+		t.Fail()
+	}
+}
+
+func TestIShouldFailParsingPartialChunk(t *testing.T) {
+	p := New(NewKeyMatcher("{}"))
+
+	if p.Match("/{should}", "/notmatch/salut") {
 		t.Fail()
 	}
 }
